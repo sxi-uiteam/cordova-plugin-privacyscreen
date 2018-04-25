@@ -6,7 +6,7 @@
  */
 #import "PrivacyScreenPlugin.h"
 
-static UIImageView *imageView;
+UIImageView *imageView;
 
 @implementation PrivacyScreenPlugin
 
@@ -34,7 +34,6 @@ static UIImageView *imageView;
   NSString *imgName = [self getImageName:self.viewController.interfaceOrientation delegate:(id<CDVScreenOrientationDelegate>)vc device:[self getCurrentDevice]];
   UIImage *splash = [UIImage imageNamed:imgName];
   if (splash == NULL) {
-    imageView = NULL;
     self.viewController.view.window.hidden = YES;
   } else {
     imageView = [[UIImageView alloc]initWithFrame:[self.viewController.view bounds]];
@@ -70,6 +69,7 @@ static UIImageView *imageView;
   // this is appropriate for detecting the runtime screen environment
   device.iPhone6 = (device.iPhone && limit == 667.0);
   device.iPhone6Plus = (device.iPhone && limit == 736.0);
+  device.iPhoneX  = (device.iPhone && limit == 812.0);
   
   return device;
 }
@@ -100,9 +100,14 @@ static UIImageView *imageView;
       imageName = [imageName stringByAppendingString:@"-700"];
     } else if(device.iPhone6) {
       imageName = [imageName stringByAppendingString:@"-800"];
-    } else if(device.iPhone6Plus) {
-      imageName = [imageName stringByAppendingString:@"-800"];
-      if (currentOrientation == UIInterfaceOrientationPortrait || currentOrientation == UIInterfaceOrientationPortraitUpsideDown) {
+    } else if(device.iPhone6Plus || device.iPhoneX ) {
+      if(device.iPhone6Plus) {
+        imageName = [imageName stringByAppendingString:@"-800"];
+      } else {
+        imageName = [imageName stringByAppendingString:@"-1100"];
+      }
+      if (currentOrientation == UIInterfaceOrientationPortrait || currentOrientation == UIInterfaceOrientationPortraitUpsideDown)
+      {
         imageName = [imageName stringByAppendingString:@"-Portrait"];
       }
     }
@@ -115,11 +120,15 @@ static UIImageView *imageView;
     imageName = isLandscape ? nil : [imageName stringByAppendingString:@"-568h"];
   } else if (device.iPhone6) { // does not support landscape
     imageName = isLandscape ? nil : [imageName stringByAppendingString:@"-667h"];
-  } else if (device.iPhone6Plus) { // supports landscape
-    if (isOrientationLocked) {
+  } else if (device.iPhone6Plus || device.iPhoneX) { // supports landscape
+    if (isOrientationLocked)
+    {
       imageName = [imageName stringByAppendingString:(supportsLandscape ? @"-Landscape" : @"")];
-    } else {
-      switch (currentOrientation) {
+    }
+    else
+    {
+      switch (currentOrientation)
+      {
         case UIInterfaceOrientationLandscapeLeft:
         case UIInterfaceOrientationLandscapeRight:
           imageName = [imageName stringByAppendingString:@"-Landscape"];
@@ -128,9 +137,13 @@ static UIImageView *imageView;
           break;
       }
     }
-    imageName = [imageName stringByAppendingString:@"-736h"];
-    
-  } else if (device.iPad) { // supports landscape
+    if (device.iPhoneX) {
+      imageName = [imageName stringByAppendingString:@"-2436h"];
+    } else {
+      imageName = [imageName stringByAppendingString:@"-736h"];
+    }
+  }
+ else if (device.iPad) { // supports landscape
     if (isOrientationLocked) {
       imageName = [imageName stringByAppendingString:(supportsLandscape ? @"-Landscape" : @"-Portrait")];
     } else {
