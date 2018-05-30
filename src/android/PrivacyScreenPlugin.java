@@ -7,20 +7,13 @@
 package org.devgeeks.privacyscreen;
 
 import org.apache.cordova.CordovaPlugin;
-import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaInterface;
 import org.apache.cordova.CordovaWebView;
 
 import android.app.Activity;
 import android.view.Window;
 import android.view.WindowManager;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import android.content.Context;
-import android.os.Bundle;
+import android.util.Log;
 
 /**
  * This class sets the FLAG_SECURE flag on the window to make the app
@@ -31,7 +24,22 @@ public class PrivacyScreenPlugin extends CordovaPlugin {
   @Override
   public void initialize(CordovaInterface cordova, CordovaWebView webView) {
     super.initialize(cordova, webView);
-    Activity activity = this.cordova.getActivity();
-    activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_SECURE);
+    Activity activity = cordova.getActivity();
+
+    if (!isDebug(activity)) {
+      activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_SECURE);
+    }
+  }
+
+  private boolean isDebug(Activity activity) {
+    try {
+      Class<?> buildConfigClass = Class.forName(activity.getPackageName() + ".BuildConfig");
+      return (boolean)buildConfigClass.getField("DEBUG").get(null);
+    }
+    catch (Exception e) {
+      Log.w("PrivacyScreenPlugin", e);
+      return false;
+    }
   }
 }
+
