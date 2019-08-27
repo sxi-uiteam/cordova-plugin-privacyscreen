@@ -16,7 +16,9 @@ typedef struct {
   BOOL iPhone6Plus;
   BOOL retina;
   BOOL iPhoneX;
-  
+  BOOL iPhoneXR;
+  BOOL iPhoneXSMax;
+
 } CDV_iOSDevice;
 
 @interface PrivacyScreenPlugin : CDVPlugin
