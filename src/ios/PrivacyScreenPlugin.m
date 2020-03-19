@@ -18,7 +18,7 @@ UIImageView *imageView;
     
     
   [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onAppWillResignActive:)
-                                               name:UIApplicationDidEnterBackgroundNotification object:nil;                                            
+                                               name:UIApplicationDidEnterBackgroundNotification object:nil];                                            
 }
 
 - (void)onAppDidBecomeActive:(UIApplication *)application
